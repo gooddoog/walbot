@@ -48,8 +48,15 @@ class WbMember(WbWrapper):
         return f"{self.name}#{self.discriminator}"
 
 
+class WbRole(WbWrapper):
+    def __init__(self, role: discord.Role) -> None:
+        self.id = role.id
+        self.name = role.name
+        self.members = [WbMember(member) for member in role.members]
+
+
 class WbTextChannel(WbWrapper):
-    def __init__(self, channel: discord.TextChannel):
+    def __init__(self, channel: discord.TextChannel) -> None:
         self.id = channel.id
         self.name = channel.name
         self.position = channel.position
@@ -72,6 +79,15 @@ class WbMessage(WbWrapper):
     def __init__(self, message: discord.Message) -> None:
         self.id = message.id
         self.content = message.content
+        self.mention_everyone = message.mention_everyone
+        self.mentions = [WbMember(member) for member in message.mentions]
+        self.role_mentions = [WbRole(member) for member in message.role_mentions]
         self.author = WbMember(message.author)
         self.channel = WbTextChannel(message.channel)
         self.guild = WbGuild(message.guild)
+
+    async def add_reaction(self, *args, **kwargs):
+        chan = bc.get_channel(self.channel.id)
+        msg = await chan.fetch_message(self.id)
+        res = await msg.add_reaction(*args, **kwargs)
+        return res

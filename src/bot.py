@@ -33,15 +33,15 @@ class WalBot(discord.Client):
         self.secret_config = secret_config
         self.loop.create_task(self.config_autosave())
         self.loop.create_task(self.process_reminders())
-        bc.config = self.config
-        bc.commands = self.config.commands
         bc.background_loop = self.loop
-        bc.latency = lambda: self.latency
-        bc.change_status = self.change_status
         bc.change_presence = self.change_presence
+        bc.change_status = self.change_status
+        bc.close = self.close
+        bc.commands = self.config.commands
+        bc.config = self.config
         bc.get_channel = self.get_channel
         bc.get_guild = self.get_guild
-        bc.close = self.close
+        bc.latency = lambda: self.latency
         bc.secret_config = self.secret_config
         if not bc.args.fast_start:
             if bc.markov.check():
