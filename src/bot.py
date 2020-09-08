@@ -22,6 +22,7 @@ from .markov import Markov
 from .reminder import Reminder
 from .repl import Repl
 from .utils import Util
+from .wrap import WbMessage
 
 
 class WalBot(discord.Client):
@@ -39,6 +40,7 @@ class WalBot(discord.Client):
         bc.change_status = self.change_status
         bc.change_presence = self.change_presence
         bc.get_channel = self.get_channel
+        bc.get_guild = self.get_guild
         bc.close = self.close
         bc.secret_config = self.secret_config
         if not bc.args.fast_start:
@@ -104,6 +106,7 @@ class WalBot(discord.Client):
         bc.bot_user = self.user
 
     async def on_message(self, message):
+        message = WbMessage(message=message)
         try:
             log.info(f"<{message.id}> {message.author} -> {message.content}")
             if message.author.id == self.user.id:
