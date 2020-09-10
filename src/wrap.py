@@ -86,8 +86,9 @@ class WbMessage(WbWrapper):
         self.channel = WbTextChannel(message.channel)
         self.guild = WbGuild(message.guild)
 
+    @property
+    async def _message(self):
+        return await bc.get_channel(self.channel.id).fetch_message(self.id)
+
     async def add_reaction(self, *args, **kwargs):
-        chan = bc.get_channel(self.channel.id)
-        msg = await chan.fetch_message(self.id)
-        res = await msg.add_reaction(*args, **kwargs)
-        return res
+        return await (await self._message).add_reaction(*args, **kwargs)
